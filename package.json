@@ -1,0 +1,19 @@
+{
+  "name": "unreal_finance_task",
+  "version": "1.0.0",
+  "description": "Unreal Finance task (creating stablecoin nUSD)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aniket Mane",
+  "license": "ISC",
+  "devDependencies": {
+    "hardhat": "^2.16.1"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^0.6.1",
+    "chai": "^4.3.7",
+    "web3": "^4.0.2"
+  }
+}

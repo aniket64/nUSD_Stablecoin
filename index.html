@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>nUSD Stablecoin UI</title>
+</head>
+
+<body>
+    <h1>nUSD Stablecoin</h1>
+
+    <label for="amount">Amount:</label>
+    <input type="text" id="amount" placeholder="Enter amount of ETH" />
+
+    <button onclick="deposit()">Deposit</button>
+    <button onclick="redeem()">Redeem</button>
+
+    <p>Total nUSD Supply: <span id="totalSupply"></span></p>
+
+    <script>
+        // Connect to Infura Ethereum provider
+        const providerUrl = 'https://rinkeby.infura.io/v3/$infura_id';
+        const web3 = new Web3(new Web3.providers.HttpProvider(providerUrl));
+
+        web3.eth.defaultAccount = '0xde670903Dbee3b25150a29011501a021136eef8F';
+
+        const contractAddress = '0x609BB88Fc54071C9f445120e76FBfbCe1E31AfAC';
+        const contractABI = [
+            {
+                "inputs": [],
+                "name": "deposit",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_priceFeed",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "ethAmount",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "nusdAmount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Deposit",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "nusdAmount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "redeem",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "nusdAmount",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "ethAmount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Redeem",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "balanceOf",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "decimals",
+                "outputs": [
+                    {
+                        "internalType": "uint8",
+                        "name": "",
+                        "type": "uint8"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getETHPrice",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "name",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "symbol",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "totalSupply",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+        const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+        // Function to deposit ETH
+        async function deposit() {
+            const amount = document.getElementById('amount').value;
+            await contract.methods.deposit().send({
+                value: web3.utils.toWei(amount),
+                from: web3.eth.defaultAccount,
+            });
+        }
+
+        // Function to redeem nUSD
+        async function redeem() {
+            const amount = document.getElementById('amount').value;
+            await contract.methods.redeem(web3.utils.toWei(amount)).send({
+                from: web3.eth.defaultAccount,
+            });
+        }
+
+        // Function to update total supply
+        async function updateTotalSupply() {
+            const totalSupply = await contract.methods.totalSupply().call();
+            document.getElementById('totalSupply').textContent = totalSupply;
+        }
+
+        updateTotalSupply();
+    </script>
+</body>
+
+</html>
